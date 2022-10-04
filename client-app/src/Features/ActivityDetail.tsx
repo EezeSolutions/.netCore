@@ -7,21 +7,23 @@ import { activity } from '../models/activities';
 interface Props
 {
 
-    activity: activity
+    activity: activity;
+    cancelActivity: () => void;
+    formOpen: (id: string) => void;
 }
-export default function ActivityDetail({ activity }: Props)
+export default function ActivityDetail({ activity, cancelActivity, formOpen }: Props)
 {
 
     return (
-        <Card fluid
+        <Card fluid id={activity.id}
             image={`/assets/categoryImages/${activity.category}.jpg`}
             header={activity.title}
             meta={activity.date}
             description={activity.description}
             extra=<div>
                 <ButtonGroup widths='2'>
-                    <Button basic color='blue' content='Edit' />
-                    <Button basic color='grey' content='Cancel' />
+                    <Button onClick={() => formOpen(activity.id)} basic color='blue' content='Edit' />
+                    <Button onClick={()=> cancelActivity()} basic color='grey' content='Cancel' />
                 </ButtonGroup></div>
         />
         );

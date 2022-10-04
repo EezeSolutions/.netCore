@@ -1,43 +1,53 @@
 import { act } from '@testing-library/react';
 import React from 'react';
-import { Button, Item, ItemContent, ItemGroup, List, Segment, Label } from 'semantic-ui-react';
+import { Button, Item, ItemContent, ItemGroup, List, Segment, Label, Container, Grid, GridColumn } from 'semantic-ui-react';
 import { activity } from '../models/activities';
+import ActivityDetail from './ActivityDetail';
+import ActivityForm from './ActivityForm';
+import ActivityList from './ActivityList';
 
 interface Props
 {
-
-    activity: activity[]
+    activity: activity[];
+    choosenactivity: activity | any;
+    selectActivity: (id: string) => void;
+    cancelActivity: () => void;
+    editMode: boolean;
+    formOpen: (id: string) => void;
+    editCancel: () => void;
+  
 }
-export default function ActivityDashboard({ activity }: Props)
+export default function ActivityDashboard({ activity, choosenactivity, selectActivity, cancelActivity, editMode, formOpen, editCancel }: Props)
 {
     return (
 
-        <Segment>
 
-            <Item.Group divided>
+        <Container style={{marginTop:'7em'}}>
 
-                {activity.map((activity) =>
-                (
-                    <Item>
-                        <Item.Content>
-                            <Item.Header as='a'>{activity.title}</Item.Header>
-                            <Item.Meta>{activity.date}</Item.Meta>
-                            <Item.Description>
-                                <span>{activity.description} </span>
-                                <span>{activity.city} </span>,<span>{activity.venue} </span>
+                <Grid>
 
-                            </Item.Description>
-                            <Item.Extra>
-                                <Button floated='right'  color='blue' content='Details'></Button>
-                                <Label basic content={activity.category} />
-                             </Item.Extra>
-                        </Item.Content>
-                    </Item>
-                ))}
-            </Item.Group>
+                    <GridColumn width="10">
 
-            
-        </Segment>
+                    <ActivityList Activities={activity}
+                        selectActivity={selectActivity}
+                    />
+                      
+                    </GridColumn>
+
+                <GridColumn width="6">
+                    {choosenactivity && !editMode &&
+                        <ActivityDetail activity={choosenactivity} cancelActivity={cancelActivity} formOpen={formOpen} />}
+
+                    {editMode &&
+                        <ActivityForm activity={choosenactivity} cancelActivity={cancelActivity} formClose={editCancel}/>}
+                    </GridColumn>
+
+                </Grid>
+               
+            </Container>
+
+
+        
 
     );
 

@@ -8,11 +8,14 @@ import ActivityDashboard from '../Features/ActivityDashboard';
 import ActivityDetail from '../Features/ActivityDetail';
 import { act } from '@testing-library/react';
 import ActivityForm from '../Features/ActivityForm';
+import { setegid } from 'process';
 
 
 function App() {
     const [activities, setActivity] = useState<activity[]>([]);
-
+    const [choosenactivity, setSelectedActivity] = useState<activity | undefined>(undefined);
+    const [editMode, setEditMode] = useState(false);
+    
     useEffect(() =>
     {
         axios.get<activity[]>('https://localhost:5001/api/Activities').then(resp => {
@@ -21,31 +24,49 @@ function App() {
         });
     },[])
 
+    function handleSelecectedctivity(id : string)
+    {
+        console.log(id);
+        setSelectedActivity(activities.find(x => x.id === id));
+        setEditMode(false);
+    }
+
+    function handleCancelselectActivity()
+    {
+        setSelectedActivity(undefined);
+    }
+
+    function formOpen(id?: string)
+    {
+        id ? handleSelecectedctivity(id) : handleCancelselectActivity();
+
+        setEditMode(true);
+    }
+
+    function editCancel()
+    {
+        setEditMode(false);
+        handleCancelselectActivity();
+    }
+
     return (
 
         <div>
-            <NavBar />
+            <NavBar createnewactivity={formOpen} />
 
-            <Container style={{marginTop:'7em'}}>
+            <ActivityDashboard
+                activity={activities}
+                choosenactivity={choosenactivity}
+                selectActivity={handleSelecectedctivity}
+                cancelActivity={handleCancelselectActivity}
+                editMode={editMode}
+                formOpen={formOpen}
+                editCancel={editCancel}
 
-                <Grid>
+            />
 
-                    <GridColumn width="10">
 
-                        <ActivityDashboard activity={activities} />
-
-                    </GridColumn>
-
-                    <GridColumn width="6">
-                        {activities[0] &&
-                            <ActivityDetail activity={activities[0]} />}
-
-                        <ActivityForm />
-                    </GridColumn>
-
-                </Grid>
-               
-            </Container>
+            
                
       
     </div>
